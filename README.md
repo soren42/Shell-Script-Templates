@@ -4,6 +4,9 @@ Production-ready templates for building robust, maintainable bash and zsh script
 
 [![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-sa/4.0/)
 [![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)](https://github.com/yourusername/shell-templates/releases)
+[![Shell: zsh](https://img.shields.io/badge/Shell-zsh-blue.svg)](https://www.zsh.org/)
+[![Shell: bash](https://img.shields.io/badge/Shell-bash-blue.svg)](https://www.gnu.org/software/bash/manual/bash.html)
+[![Platform: macOS | Linux](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux-brightgreen.svg)](#platform-support)
 
 ## Overview
 
