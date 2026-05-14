@@ -3,429 +3,266 @@
 Production-ready templates for building robust, maintainable bash and zsh scripts with professional engineering standards.
 
 [![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-sa/4.0/)
-[![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)](https://github.com/yourusername/shell-templates/releases)
-[![Shell: zsh](https://img.shields.io/badge/Shell-zsh-blue.svg)](https://www.zsh.org/)
-[![Shell: bash](https://img.shields.io/badge/Shell-bash-blue.svg)](https://www.gnu.org/software/bash/manual/bash.html)
-[![Platform: macOS | Linux](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux-brightgreen.svg)](#platform-support)
+[![Version](https://img.shields.io/badge/version-4.0.0-blue.svg)](https://github.com/soren42/Shell-Script-Templates/releases)
+[![Shell](https://img.shields.io/badge/shell-bash%204.0%2B%20%7C%20zsh%205.0%2B-green.svg)]()
+
+## What's New in v4
+
+**Version 4.0.0** is a major release introducing three key innovations:
+
+- **Feature Flags** — Configurable behavior flags at the top of every script control execution requirements, capability toggles, and runtime validation
+- **Initialization Wizard** — An interactive tool (`init-script.sh`) that generates customized scripts through guided prompts, with support for porting v1–v3 scripts
+- **Plugin System** — A modular architecture for extending scripts with reusable functionality, shipping with four core plugins
 
 ## Overview
 
-This repository provides comprehensive templates for bash and zsh shell scripting that embody best practices for error handling, logging, dependency management, and user experience. Whether you’re building CLI tools, automation scripts, or system utilities, these templates give you a solid foundation to start from.
+This repository provides comprehensive templates for bash and zsh shell scripting that embody best practices for error handling, logging, dependency management, and user experience. Whether you're building CLI tools, automation scripts, or system utilities, these templates give you a solid foundation to start from.
 
 ### Key Features
 
-- **Strict Mode Execution** - Built-in error handling with `set -euo pipefail` (bash) or `setopt ERR_EXIT NO_UNSET PIPE_FAIL` (zsh)
-- **Professional Logging** - Multi-level verbosity system with color support and timestamps
-- **Flexible Argument Parsing** - POSIX, GNU, and combined short options (bash) or declarative `zparseopts` (zsh)
-- **Automatic Cleanup** - Trap handlers ensure resources are freed even on errors or interrupts
-- **Dependency Validation** - Check for required/optional binaries with helpful installation messages
-- **Configuration Management** - Hierarchical config file loading from system to user to local
-- **Input Validation** - Built-in helpers for integers, strings, files, and custom validation
-- **Dry-Run Support** - Safe testing mode that shows what would be done without executing
-- **Extensive Documentation** - Comprehensive developer guides with examples and API reference
+- **Strict Mode Execution** — Built-in error handling with `set -euo pipefail` (bash) or `setopt ERR_EXIT NO_UNSET PIPE_FAIL` (zsh)
+- **Feature Flag System** — 15+ configurable flags controlling script behavior, validated at startup
+- **Professional Logging** — Five-level verbosity system with color support and timestamps
+- **Flexible Argument Parsing** — POSIX/GNU options (bash) or declarative `zparseopts` (zsh)
+- **Plugin Architecture** — Extend scripts with modular, reusable functionality
+- **Automatic Cleanup** — Trap handlers ensure resources are freed even on errors
+- **Dependency Validation** — Required/optional binary checking with fallback chains
+- **Configuration Management** — Hierarchical config file loading (7-level precedence)
+- **Input Validation** — Built-in helpers for integers, floats, strings, files, and more
+- **Dry-Run Support** — Safe testing mode via `run()` wrapper
+- **Self-Test Framework** — Built-in testing with `--self-test` flag
+- **AI/CI Integration** — `--non-interactive` mode for programmatic script generation
 
 ## Quick Start
 
-### Bash Template
+### Using the Initialization Wizard (Recommended)
+
+```bash
+# Run the interactive wizard
+./init-script.sh
+
+# Pre-fill shell type and name
+./init-script.sh --shell bash --name deploy-tool
+
+# Port an existing script to v4
+./init-script.sh --port my-old-script.sh
+
+# Fully automated (for CI/AI integration)
+./init-script.sh --non-interactive --shell zsh --name backup
+```
+
+The wizard walks you through shell selection, metadata, feature flags, dependencies, argument definitions, plugin selection, and test scaffolding — then generates a ready-to-implement script.
+
+### Manual Setup
 
 ```bash
 # Copy the template
-cp template.sh my-script.sh
+cp templates/template.sh my-script.sh
 chmod +x my-script.sh
 
-# Update metadata
-vim my-script.sh  # Edit SCRIPT_VERSION, SCRIPT_AUTHOR
+# Edit metadata, feature flags, and implement main()
+vim my-script.sh
 
-# Implement your logic in main()
 # Run it
 ./my-script.sh --help
-./my-script.sh -vv input.txt
 ```
 
-**Requirements:** Bash 4.0+
+## Feature Flags
 
-### Zsh Template
+Every script starts with a feature flag section that controls behavior:
 
 ```bash
-# Copy the template
-cp template.zsh my-script.zsh
-chmod +x my-script.zsh
+# Execution Requirements
+readonly REQUIRE_ROOT=false
+readonly REQUIRES_NETWORK=false
+readonly REQUIRES_DISK_SPACE=false
 
-# Update metadata
-vim my-script.zsh  # Edit SCRIPT_VERSION, SCRIPT_AUTHOR
+# Capabilities
+readonly SUPPORTS_DRY_RUN=true
+readonly IDEMPOTENT=false
+readonly INTERACTIVE=false
 
-# Implement your logic in main()
-# Optionally compile for faster loading
-zcompile my-script.zsh
+# Feature Toggles
+readonly HAS_EXTERNAL_DEPENDENCIES=true
+readonly USES_CONFIG_FILES=true
+readonly VERBOSE_BY_DEFAULT=false
+readonly INCLUDES_SELF_TEST=false
 
-# Run it
-./my-script.zsh --help
-./my-script.zsh -vv input.txt
+# Plugin System
+readonly ENABLED_PLUGINS="ai-integration,http-client"
 ```
 
-**Requirements:** Zsh 5.0+
+Flags trigger automatic pre-flight validation: root privilege checks, network connectivity tests, disk space verification, and environment validation all happen before your `main()` function runs.
 
-## Template Comparison
+Command-line arguments always override internal flag values, giving the user closest to runtime the final say.
 
-|Feature             |Bash Template            |Zsh Template                  |
-|--------------------|-------------------------|------------------------------|
-|**Argument Parsing**|Manual case/while loop   |Declarative `zparseopts`      |
-|**Array Indexing**  |0-based                  |1-based (default)             |
-|**Command Checking**|`command -v`             |`$+commands[cmd]`             |
-|**Trap Handling**   |`trap cmd SIGNAL`        |`TRAPSIGNAL() { }` functions  |
-|**Stack Traces**    |`BASH_SOURCE`, `FUNCNAME`|`funcsourcetrace`, `funcstack`|
-|**Compilation**     |Not supported            |`zcompile` for faster loading |
-|**Floats**          |External (`bc`)          |Native `typeset -F`           |
-|**Completion**      |Manual setup             |Built-in completion scaffold  |
+## Plugin System
 
-## Core Capabilities
+Plugins extend script functionality through a simple, file-based architecture:
 
-### Logging System
-
-Five verbosity levels with color-coded output:
-
-```bash
-trace "Very detailed info"      # V_TRACE (4) - Dim
-debug "Internal state: x=$x"    # V_DEBUG (3) - Cyan
-info "Processing file..."       # V_NORMAL (1) - Green
-warn "Deprecated feature"       # V_NORMAL (1) - Yellow
-error "Something went wrong"    # V_QUIET (0) - Red
-fatal "Cannot continue" $code   # V_QUIET (0) - Bold red, exits
+```
+~/.shell-script-templates/plugins/
+  plugin-name/
+    plugin.conf      # Metadata and configuration
+    functions.sh     # Shell functions
+    init.sh          # Initialization code
 ```
 
-Control verbosity with `-v` (repeatable), `-q` (quiet), or `-d` (debug with xtrace).
+### Core Plugins (Included)
 
-### Dependency Management
+| Plugin | Description |
+|--------|-------------|
+| **ai-integration** | Unified LLM API interface for Claude, GPT, and Gemini |
+| **http-client** | HTTP operations with retry logic, auth, and error handling |
+| **json-parser** | jq wrapper for JSON parsing, validation, and generation |
+| **tui** | Text UI with gum/dialog/whiptail backends and ANSI fallback |
 
+### Plugin Usage
+
+Enable plugins in the feature flags:
 ```bash
-validate_dependencies() {
-    # Required - script exits if missing
-    require_binary curl
-    require_binary jq
-    
-    # Optional - script continues with fallback
-    optional_binary bat cat
-    if ! optional_binary pandoc; then
-        warn "pandoc not found, PDF export disabled"
-    fi
+readonly ENABLED_PLUGINS="ai-integration,json-parser"
+```
+
+Then use plugin functions in your `main()`:
+```bash
+main() {
+    # AI integration
+    response=$(ai_query "Summarize this log" --input "$(cat /var/log/app.log)")
+
+    # HTTP client
+    data=$(http_get "https://api.example.com/status" --bearer "$TOKEN")
+
+    # JSON parser
+    version=$(json_get "$data" '.version')
+
+    # TUI
+    choice=$(tui_choose "Select environment" "dev" "staging" "production")
 }
 ```
 
-Binaries are registered in associative arrays for easy access:
+See [PLUGIN_DEVELOPMENT.md](docs/PLUGIN_DEVELOPMENT.md) for creating custom plugins.
 
-```bash
-"${REQUIRED_BINARIES[curl]}" -s "$url" | "${REQUIRED_BINARIES[jq]}" '.data'
-```
+## Template Comparison
 
-### Input Validation
+| Feature | Bash Template | Zsh Template |
+|---------|---------------|--------------|
+| **Argument Parsing** | Manual case/while loop | Declarative `zparseopts` |
+| **Array Indexing** | 0-based | 1-based |
+| **Command Checking** | `command -v` | `$+commands[cmd]` |
+| **Trap Handling** | `trap cmd SIGNAL` | `TRAPSIGNAL()` functions |
+| **Stack Traces** | `BASH_SOURCE`, `FUNCNAME` | `funcsourcetrace`, `funcstack` |
+| **Compilation** | Not supported | `zcompile` for faster loading |
+| **Floats** | External (`bc`) | Native `typeset -F` |
+| **Completion** | Manual setup | Built-in scaffold |
 
-Built-in validators for common types:
-
-```bash
-validate_integer "42" 1 100     # Integer in range
-validate_string "hello" 1 50    # String length
-validate_file_readable "$file"  # File exists and readable
-validate_dir_writable "$dir"    # Directory exists and writable
-sanitize_filename "My File!"    # Safe filename: "My_File_"
-```
-
-### Dry-Run Mode
-
-Wrap commands with `run()` for automatic dry-run support:
-
-```bash
-run rm -rf "$temp_dir"
-run cp "$source" "$dest"
-```
-
-When invoked with `--dry-run` or `-n`:
+## Repository Structure
 
 ```
-[INFO] [DRY-RUN] Would execute: rm -rf /tmp/work
-[INFO] [DRY-RUN] Would execute: cp input.txt /tmp/work/
-```
-
-### Configuration Files
-
-Hierarchical loading from multiple locations:
-
-1. `/etc/{script_name}/{script_name}.conf`
-2. `/etc/{script_name}.conf`
-3. `~/.config/{script_name}/{script_name}.conf`
-4. `~/.{script_name}.conf`
-5. `./{script_name}.conf`
-6. `${SCRIPT_NAME}_CONFIG_FILE` environment variable
-7. `--config` command-line argument
-
-Files are shell-sourceable:
-
-```bash
-# my-script.conf
-DB_HOST="localhost"
-DB_PORT=5432
-ENABLE_CACHE=true
+Shell-Script-Templates/
+├── templates/
+│   ├── template.sh          # Bash v4 template
+│   └── template.zsh         # Zsh v4 template
+├── init-script.sh           # Interactive wizard
+├── plugins/
+│   ├── ai-integration/      # LLM API plugin
+│   ├── http-client/         # HTTP operations plugin
+│   ├── json-parser/         # JSON utilities plugin
+│   └── tui/                 # Text UI plugin
+├── docs/
+│   ├── README-bash.md       # Bash template guide
+│   ├── README-zsh.md        # Zsh template guide
+│   └── PLUGIN_DEVELOPMENT.md
+├── CHANGELOG.md
+├── LICENSE
+└── README.md
 ```
 
 ## Built-in Options
 
-Both templates include these standard options:
+Both templates include these standard command-line options:
 
-|Short|Long       |Description                              |
-|-----|-----------|-----------------------------------------|
-|`-h` |`--help`   |Show help message and exit               |
-|`-V` |`--version`|Show version and exit                    |
-|`-v` |`--verbose`|Increase verbosity (repeatable: `-vvv`)  |
-|`-q` |`--quiet`  |Suppress non-error output                |
-|`-n` |`--dry-run`|Show what would be done without executing|
-|`-d` |`--debug`  |Maximum verbosity plus xtrace            |
-|`-c` |`--config` |Specify config file path                 |
-|`-o` |`--output` |Specify output file                      |
+| Short | Long | Description |
+|-------|------|-------------|
+| `-h` | `--help` | Show help message and exit |
+| `-V` | `--version` | Show version and exit |
+| `-v` | `--verbose` | Increase verbosity (repeatable: `-vvv`) |
+| `-q` | `--quiet` | Suppress non-error output |
+| `-n` | `--dry-run` | Show what would be done without executing |
+| `-d` | `--debug` | Maximum verbosity plus xtrace |
+| `-c` | `--config` | Specify config file path |
+| `-o` | `--output` | Specify output file |
+| | `--self-test` | Run internal self-tests and exit |
 
-## Documentation
+## Self-Test Framework
 
-Each template includes a comprehensive developer’s guide:
-
-- **README-bash.md** - Complete documentation for the bash template
-- **README-zsh.md** - Complete documentation for the zsh template including bash comparison
-
-Topics covered:
-
-- Architecture and execution flow
-- Feature reference with examples
-- Customization guide
-- Best practices (do’s and don’ts)
-- Real-world examples
-- Troubleshooting guide
-- Complete API reference
-
-## Examples
-
-### Simple File Processor
+Scripts include built-in test functions that verify core functionality:
 
 ```bash
-#!/usr/bin/env bash
-# line-number.sh - Add line numbers to files
+# Run self-tests
+./my-script.sh --self-test
 
-validate_dependencies() {
-    require_binary awk gawk mawk
-}
-
-main() {
-    local file="${POSITIONAL_ARGS[0]}"
-    
-    if ! validate_file_readable "$file"; then
-        exit $E_NOINPUT
-    fi
-    
-    info "Processing: ${file}"
-    "${REQUIRED_BINARIES[awk]}" '{print NR": "$0}' "$file"
-}
+# Output:
+# [INFO] Running self-tests...
+# [INFO] Validation function tests passed
+# [INFO] Dependency check tests passed
+# All self-tests passed
 ```
 
-### Multi-Command Tool
+The initialization wizard can also generate standalone test files with assertion helpers for more comprehensive testing.
+
+## AI and CI Integration
+
+The `--non-interactive` flag enables fully automated script generation:
 
 ```bash
-#!/usr/bin/env bash
-# project-tool.sh - Project management utility
-
-parse_arguments() {
-    SUBCOMMAND="$1"
-    shift
-    
-    case "$SUBCOMMAND" in
-        init|build|clean|status)
-            parse_subcommand_args "$SUBCOMMAND" "$@"
-            ;;
-        *)
-            error "Unknown command: ${SUBCOMMAND}"
-            exit $E_USAGE
-            ;;
-    esac
-}
-
-main() {
-    case "$SUBCOMMAND" in
-        init)   cmd_init ;;
-        build)  cmd_build ;;
-        clean)  cmd_clean ;;
-        status) cmd_status ;;
-    esac
-}
+# Generate a script programmatically
+./init-script.sh \
+    --non-interactive \
+    --shell bash \
+    --name deploy-service \
+    --output /path/to/project/
 ```
 
-See the full developer guides for complete examples with validation, error handling, and more.
-
-## Exit Codes
-
-Both templates use semantic exit codes based on BSD sysexits:
-
-|Code|Constant   |Meaning             |
-|----|-----------|--------------------|
-|0   |`E_SUCCESS`|Success             |
-|2   |`E_USAGE`  |Command syntax error|
-|66  |`E_NOINPUT`|Input file not found|
-|77  |`E_NOPERM` |Permission denied   |
-|78  |`E_CONFIG` |Configuration error |
-
-Plus additional codes for software errors, I/O errors, network issues, and more.
-
-## Error Handling
-
-Comprehensive error handling with automatic cleanup:
-
-```bash
-# Automatic cleanup on exit
-cleanup() {
-    local exit_code=$?
-    # Remove temp files
-    # Restore state
-    exit $exit_code
-}
-
-# Detailed error reporting
-on_error() {
-    local exit_code=$?
-    error "Command failed with exit code ${exit_code}"
-    error "  Line: ${BASH_LINENO[0]}"
-    error "  Command: ${BASH_COMMAND}"
-    # Stack trace in debug mode
-}
-```
-
-## Customization
-
-### Adding New Options
-
-Both templates make it easy to add custom options:
-
-**Bash:**
-
-```bash
-parse_arguments() {
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            -f|--format)
-                OUTPUT_FORMAT="$2"
-                shift 2
-                ;;
-            # ... other options
-        esac
-    done
-}
-```
-
-**Zsh:**
-
-```bash
-parse_arguments() {
-    zparseopts -D -E -F -K -- \
-        f:=opt_format -format:=opt_format
-    
-    (( ${#opt_format} )) && OUTPUT_FORMAT=${opt_format[-1]}
-}
-```
-
-### Custom Validation
-
-Add domain-specific validators:
-
-```bash
-validate_email() {
-    local email="$1"
-    [[ "$email" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]
-}
-
-validate_url() {
-    local url="$1"
-    [[ "$url" =~ ^(https?|ftp)://[A-Za-z0-9.-]+(/.*)?$ ]]
-}
-```
-
-## Best Practices
-
-### Do’s ✓
-
-- Always use `run()` for commands with side effects
-- Prefer `fatal()` over `error()` + `exit`
-- Use semantic exit codes from constants
-- Register temp files immediately after creation
-- Validate inputs early in the script
-- Quote all variables to prevent word splitting
-- Use debug logging liberally
-
-### Don’ts ✗
-
-- Don’t bypass strict mode without good reason
-- Don’t use global variables unnecessarily
-- Don’t hardcode paths (use XDG_CONFIG_HOME, etc.)
-- Don’t forget to document functions
-- Don’t ignore return values
-- Don’t use `path` as a variable name (shadows $PATH in zsh)
-
-## Zsh-Specific Features
-
-The zsh template includes features not available in bash:
-
-- **zparseopts** - Declarative argument parsing
-- **Native floats** - `typeset -F num=3.14`
-- **Extended globbing** - `*.txt(.)` (regular files), `**/` (recursive)
-- **TRAP functions** - `TRAPEXIT()`, `TRAPZERR()` instead of `trap`
-- **Parameter flags** - `${(U)var}` (uppercase), `${(j:,:)arr}` (join)
-- **Modules** - `zsh/datetime`, `zsh/stat` for performance
-- **Compilation** - `zcompile` for faster loading
-- **Completion scaffold** - Built-in tab completion support
-- **oh-my-zsh integration** - Plugin structure included
+This makes the templates accessible to AI coding assistants (Claude, Codex, Gemini) and CI/CD pipelines that need to scaffold shell scripts without human interaction.
 
 ## Requirements
 
 ### Bash Template
-
 - Bash 4.0 or later
 - Standard POSIX utilities (sed, awk, tr, mktemp)
-- Works on Linux and macOS (with Homebrew bash on macOS)
 
 ### Zsh Template
-
 - Zsh 5.0 or later
 - Standard POSIX utilities (sed, awk, mktemp)
-- Works on Linux and macOS
+
+### Plugins
+- **ai-integration**: curl, jq, and an API key for your chosen provider
+- **http-client**: curl
+- **json-parser**: jq
+- **tui**: gum (preferred), dialog, or whiptail (fallback to ANSI if none available)
+
+## Documentation
+
+- **[README-bash.md](docs/README-bash.md)** — Comprehensive bash template developer guide
+- **[README-zsh.md](docs/README-zsh.md)** — Comprehensive zsh template developer guide
+- **[PLUGIN_DEVELOPMENT.md](docs/PLUGIN_DEVELOPMENT.md)** — Guide to creating custom plugins
+- **[CHANGELOG.md](CHANGELOG.md)** — Version history
 
 ## Contributing
 
-Contributions are welcome! Please:
-
-1. Follow the existing code style and structure
-2. Add tests for new functionality
-3. Update documentation for changes
-4. Use semantic commit messages
+Contributions are welcome. Please follow the existing code style (camelCase, modular functions, comprehensive comments) and update documentation for any changes.
 
 ## License
 
-These templates are licensed under the [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/).
+Licensed under the [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/).
 
-You are free to:
-
-- **Share** - Copy and redistribute the material
-- **Adapt** - Remix, transform, and build upon the material
-
-Under the following terms:
-
-- **Attribution** - Give appropriate credit
-- **ShareAlike** - Distribute derivatives under the same license
+You are free to share and adapt this material under the terms of attribution and share-alike.
 
 ## Author
 
 **jason c. kay**
 
-Template Version: 3.0.0
+---
 
------
-
-## Getting Started
-
-1. **Choose your shell**: Pick the bash or zsh template based on your target environment
-2. **Read the guide**: Review README-bash.md or README-zsh.md for comprehensive documentation
-3. **Copy and customize**: Start with the template and adapt to your needs
-4. **Test thoroughly**: Use `-n` (dry-run) and `-d` (debug) modes during development
-
-For questions, issues, or suggestions, please open an issue on GitHub.
+*Shell Script Templates v4.0.0 — Build better shell scripts.*
