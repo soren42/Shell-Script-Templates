@@ -1,6 +1,6 @@
 # Plugin Development Guide
 
-**Version:** 4.0.0
+**Version:** 4.1.0
 **Author:** jason c. kay
 
 ---
@@ -286,10 +286,18 @@ echo "Plugin installed to ${PLUGIN_DIR}"
 
 | Plugin | Functions | Description |
 |--------|-----------|-------------|
-| **tui** | `tui_input`, `tui_choose`, `tui_confirm`, `tui_spin`, `tui_message`, `tui_filter`, `tui_table`, `tui_file`, `tui_password`, `tui_multi_choose` | Text UI with automatic backend detection |
 | **ai-integration** | `ai_query`, `ai_set_provider`, `ai_set_model`, `ai_query_as`, `ai_summarize_file`, `ai_analyze`, `ai_json`, `ai_status` | LLM API calls to Claude, GPT, Gemini |
+| **cloud-storage** | `cloud_upload`, `cloud_download`, `cloud_delete`, `cloud_ls`, `cloud_sync`, `cloud_exists`, `cloud_status` | S3, GCS, and S3-compatible storage |
+| **completions** | `completions_generate`, `completions_generate_bash`, `completions_generate_zsh`, `completions_from_args`, `completions_install`, `completions_uninstall`, `completions_list`, `completions_status` | Tab-completion generation and installation |
+| **config-advanced** | `ini_get`, `ini_set`, `ini_sections`, `ini_keys`, `toml_get`, `toml_to_json`, `toml_validate`, `dotenv_load`, `env_require`, `env_check`, `env_validate`, `env_list` | INI/TOML parsing, dotenv, env validation |
+| **database** | `db_query`, `db_exec`, `db_scalar`, `db_export`, `db_exec_file`, `db_tables`, `db_describe`, `db_table_exists`, `db_transaction`, `db_status` | SQLite, PostgreSQL, MySQL/MariaDB |
 | **http-client** | `http_get`, `http_post`, `http_put`, `http_delete`, `http_download`, `http_upload`, `http_status`, `http_ok`, `http_reachable` | HTTP operations with retries and auth |
 | **json-parser** | `json_get`, `json_set`, `json_delete`, `json_merge`, `json_validate`, `json_pretty`, `json_compact`, `json_object`, `json_array`, `json_read_file`, `json_write_file` | JSON manipulation via jq |
+| **logging-extended** | `log_to_syslog`, `log_to_journal`, `log_to_file`, `log_rotate`, `log_extended`, `log_tail`, `log_search`, `log_file_status` | Syslog, journald, file logging with rotation |
+| **notification** | `notify_ntfy`, `notify_email`, `notify_webhook`, `notify_all`, `notify_success`, `notify_failure`, `notify_warning`, `notify_status` | ntfy, email, Slack/Discord webhooks |
+| **parallel** | `parallel_run`, `parallel_map`, `parallel_for_each`, `parallel_background`, `parallel_wait`, `parallel_active_count`, `parallel_status` | Concurrent execution with multiple backends |
+| **tui** | `tui_input`, `tui_choose`, `tui_confirm`, `tui_spin`, `tui_message`, `tui_filter`, `tui_table`, `tui_file`, `tui_password`, `tui_multi_choose` | Text UI with automatic backend detection |
+| **yaml** | `yaml_get`, `yaml_set`, `yaml_delete`, `yaml_merge`, `yaml_validate`, `yaml_to_json`, `yaml_from_json`, `yaml_keys`, `yaml_count`, `yaml_create_file` | YAML parsing and manipulation via yq |
 
 ## Checklist for New Plugins
 

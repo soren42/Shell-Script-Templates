@@ -3,12 +3,12 @@
 Production-ready templates for building robust, maintainable bash and zsh scripts with professional engineering standards.
 
 [![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-sa/4.0/)
-[![Version](https://img.shields.io/badge/version-4.0.0-blue.svg)](https://github.com/soren42/Shell-Script-Templates/releases)
+[![Version](https://img.shields.io/badge/version-4.1.0-blue.svg)](https://github.com/soren42/Shell-Script-Templates/releases)
 [![Shell](https://img.shields.io/badge/shell-bash%204.0%2B%20%7C%20zsh%205.0%2B-green.svg)]()
 
 ## What's New in v4
 
-**Version 4.0.0** is a major release introducing three key innovations:
+**Version 4.1.0** is a major release introducing three key innovations:
 
 - **Feature Flags** — Configurable behavior flags at the top of every script control execution requirements, capability toggles, and runtime validation
 - **Initialization Wizard** — An interactive tool (`init-script.sh`) that generates customized scripts through guided prompts, with support for porting v1–v3 scripts
@@ -113,9 +113,17 @@ Plugins extend script functionality through a simple, file-based architecture:
 | Plugin | Description |
 |--------|-------------|
 | **ai-integration** | Unified LLM API interface for Claude, GPT, and Gemini |
+| **cloud-storage** | S3, GCS, and S3-compatible storage operations |
+| **completions** | Generate and install bash/zsh tab-completion scripts |
+| **config-advanced** | INI/TOML parsing, dotenv loading, environment validation |
+| **database** | Unified helpers for SQLite, PostgreSQL, and MySQL/MariaDB |
 | **http-client** | HTTP operations with retry logic, auth, and error handling |
 | **json-parser** | jq wrapper for JSON parsing, validation, and generation |
+| **logging-extended** | Syslog, journald integration, and log file rotation |
+| **notification** | Send alerts via ntfy, email, and Slack/Discord webhooks |
+| **parallel** | Concurrent execution via GNU parallel, xargs, or job control |
 | **tui** | Text UI with gum/dialog/whiptail backends and ANSI fallback |
+| **yaml** | YAML parsing and manipulation via yq |
 
 ### Plugin Usage
 
@@ -166,9 +174,18 @@ Shell-Script-Templates/
 ├── init-script.sh           # Interactive wizard
 ├── plugins/
 │   ├── ai-integration/      # LLM API plugin
+│   ├── cloud-storage/       # S3/GCS operations
+│   ├── completions/         # Tab-completion generator
+│   │   └── shipped/         # Pre-built completions for init-script
+│   ├── config-advanced/     # INI/TOML/dotenv parsing
+│   ├── database/            # SQLite/PostgreSQL/MySQL helpers
 │   ├── http-client/         # HTTP operations plugin
 │   ├── json-parser/         # JSON utilities plugin
-│   └── tui/                 # Text UI plugin
+│   ├── logging-extended/    # Syslog/journald/log rotation
+│   ├── notification/        # ntfy/email/webhook alerts
+│   ├── parallel/            # Concurrent execution
+│   ├── tui/                 # Text UI plugin
+│   └── yaml/                # YAML parsing via yq
 ├── docs/
 │   ├── README-bash.md       # Bash template guide
 │   ├── README-zsh.md        # Zsh template guide
@@ -211,6 +228,33 @@ Scripts include built-in test functions that verify core functionality:
 
 The initialization wizard can also generate standalone test files with assertion helpers for more comprehensive testing.
 
+## Tab Completion
+
+The initialization wizard automatically generates both bash and zsh completion scripts when creating a new script. These provide tab-completion for all built-in and custom CLI options.
+
+```bash
+# Install bash completions
+cp my-script.bash-completion ~/.local/share/bash-completion/completions/my-script
+
+# Install zsh completions
+cp _my-script ~/.zsh/completions/
+autoload -Uz compinit && compinit
+```
+
+Pre-built completions for `init-script.sh` itself ship in `plugins/completions/shipped/`. The completions plugin also provides a programmatic API for generating and installing completions at any time:
+
+```bash
+# Generate completions for an existing script (reads its --help output)
+completions_generate /path/to/my-script.sh
+
+# Install to detected default directory
+completions_install my-script.bash-completion bash
+completions_install _my-script zsh
+
+# List installed completions
+completions_list
+```
+
 ## AI and CI Integration
 
 The `--non-interactive` flag enables fully automated script generation:
@@ -238,9 +282,17 @@ This makes the templates accessible to AI coding assistants (Claude, Codex, Gemi
 
 ### Plugins
 - **ai-integration**: curl, jq, and an API key for your chosen provider
+- **cloud-storage**: aws CLI (for S3/S3-compatible) or gsutil/gcloud (for GCS)
+- **completions**: No external dependencies
+- **config-advanced**: yq (for TOML; INI/dotenv/env validation are pure shell)
+- **database**: sqlite3, psql, or mysql/mariadb client (per provider)
 - **http-client**: curl
 - **json-parser**: jq
+- **logging-extended**: logger (syslog), systemd-cat (journald); file logging is pure shell
+- **notification**: curl (for ntfy/webhooks); sendmail or msmtp (for email)
+- **parallel**: GNU parallel (preferred), xargs, or none (built-in job control fallback)
 - **tui**: gum (preferred), dialog, or whiptail (fallback to ANSI if none available)
+- **yaml**: yq (Mike Farah's Go implementation)
 
 ## Documentation
 
@@ -265,4 +317,4 @@ You are free to share and adapt this material under the terms of attribution and
 
 ---
 
-*Shell Script Templates v4.0.0 — Build better shell scripts.*
+*Shell Script Templates v4.1.0 — Build better shell scripts.*

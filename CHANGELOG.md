@@ -5,6 +5,23 @@ All notable changes to Shell Script Templates are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.0] - 2026-05-16
+
+### Added
+- **Core Plugin: cloud-storage**: Unified file operations across AWS S3, Google Cloud Storage, and S3-compatible backends (MinIO, Backblaze B2, Wasabi) with upload, download, sync, and listing
+- **Core Plugin: config-advanced**: INI file parsing (pure shell), TOML parsing (via yq), dotenv file loading, and environment variable validation with pattern matching
+- **Core Plugin: database**: Unified database helpers for SQLite, PostgreSQL, and MySQL/MariaDB with query, exec, scalar, export, transaction, and schema introspection
+- **Core Plugin: logging-extended**: Syslog and journald integration, file-based logging with automatic size-triggered rotation and compression
+- **Core Plugin: notification**: Multi-channel notification delivery via ntfy (with tags, priorities, actions), email (sendmail/msmtp), and webhooks (Slack, Discord, generic)
+- **Core Plugin: parallel**: Concurrent execution with automatic backend selection (GNU parallel, xargs, built-in job control) with progress reporting and failure handling
+- **Core Plugin: yaml**: YAML parsing, modification, and conversion via yq (Mike Farah's Go implementation) with pure-shell fallback for simple structures
+- Tab-completion generation integrated into init wizard (auto-generates bash + zsh completions during script creation)
+
+### Changed
+- Plugin count increased from 5 to 12
+- Version bumped to 4.1.0 across all files
+- README, PLUGIN_DEVELOPMENT.md, and CHANGELOG updated for full plugin inventory
+
 ## [4.0.0] - 2026-05-14
 
 ### Added
@@ -12,22 +29,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Initialization Wizard** (`init-script.sh`): Interactive script generation tool with shell selection, metadata collection, dependency analysis, argument specification, plugin selection, and test scaffolding
 - **Plugin Architecture**: File-based plugin system with configuration, initialization, and function loading
 - **Core Plugin: ai-integration**: Unified LLM API interface supporting Anthropic Claude, OpenAI GPT, and Google Gemini with provider switching, system prompts, and convenience functions
+- **Core Plugin: completions**: Tab-completion generator and installer for both bash and zsh, with pre-built completions for init-script.sh
 - **Core Plugin: http-client**: HTTP operations wrapper with retry logic, authentication (basic, bearer), file upload/download, and response helpers
 - **Core Plugin: json-parser**: jq wrapper providing JSON reading, modification, validation, formatting, generation, and file operations
 - **Core Plugin: tui**: Text User Interface abstraction supporting gum, dialog, whiptail, and pure ANSI fallback backends
-- **Self-Test Framework**: Built-in `--self-test` flag with test function scaffolding and assertion helpers
+- **Self-Test Framework**: Built-in --self-test flag with test function scaffolding and assertion helpers
 - **Pre-flight Validation**: Automatic validation of root privileges, network connectivity, disk space, and execution environment based on feature flags
-- **Script Porting**: `init-script.sh --port` flag to extract metadata from v1-v3 scripts and pre-populate v4 wizard
-- **Non-Interactive Mode**: `--non-interactive` flag on init-script.sh for AI assistant and CI/CD pipeline integration
+- **Script Porting**: init-script.sh --port flag to extract metadata from v1-v3 scripts and pre-populate v4 wizard
+- **Non-Interactive Mode**: --non-interactive flag on init-script.sh for AI assistant and CI/CD pipeline integration
 - **Standalone Test File Generation**: Wizard option to generate separate test files with assertion framework
 - **JSON Metadata Block**: Machine-readable metadata appended to generated scripts for tooling integration
 
 ### Changed
 - Templates restructured with feature flags section at top, before all other code
-- Dependency validation now conditional on `HAS_EXTERNAL_DEPENDENCIES` flag
-- Configuration loading now conditional on `USES_CONFIG_FILES` flag
-- Version bumped to 4.0.0 across all files
-- Documentation reorganized into `docs/` directory
+- Dependency validation now conditional on HAS_EXTERNAL_DEPENDENCIES flag
+- Configuration loading now conditional on USES_CONFIG_FILES flag
+- Documentation reorganized into docs/ directory
+- Repository restructured: templates/, plugins/, docs/ directories
 
 ### Improved
 - All functions now include comprehensive documentation headers
@@ -42,9 +60,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Zsh template with zparseopts, TRAP functions, extended globbing, zcompile support
 - Professional logging system with five verbosity levels and color support
 - Hierarchical configuration file loading (7-level precedence)
-- Dependency validation with `require_binary` and `optional_binary`
+- Dependency validation with require_binary and optional_binary
 - Input validation helpers (integer, float, string, file, directory)
-- Dry-run mode with `run()` wrapper
+- Dry-run mode with run() wrapper
 - Automatic temp file cleanup via trap/TRAP handlers
 - BSD sysexits-compatible exit codes
 - Comprehensive developer guides (README-bash.md, README-zsh.md)
@@ -65,5 +83,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial implementations with basic error handling and logging
 - Personal use templates
 
+[4.1.0]: https://github.com/soren42/Shell-Script-Templates/releases/tag/v4.1.0
 [4.0.0]: https://github.com/soren42/Shell-Script-Templates/releases/tag/v4.0.0
 [3.0.0]: https://github.com/soren42/Shell-Script-Templates/releases/tag/v3.0.0

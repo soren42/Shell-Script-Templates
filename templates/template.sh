@@ -1180,7 +1180,7 @@ fi
 # JSON_METADATA_START
 # {
 #   "generator": "shell-script-templates-init",
-#   "version": "4.0.0",
+#   "version": "4.1.0",
 #   "created": "",
 #   "script": {
 #     "name": "script_name",
